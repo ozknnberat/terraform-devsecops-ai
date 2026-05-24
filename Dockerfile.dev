@@ -21,5 +21,12 @@ RUN curl -LO https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linu
 # Install Checkov
 RUN pip install --no-cache-dir checkov
 
+# Create a non-root user
+RUN useradd -m devuser
+USER devuser
+
+# Add a simple healthcheck
+HEALTHCHECK CMD ["curl", "-f", "http://localhost/"] || exit 1
+
 WORKDIR /app
 CMD ["bash"]
