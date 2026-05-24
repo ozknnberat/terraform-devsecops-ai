@@ -1,0 +1,46 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-scan:
+    name: Checkov Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov Scan
+        id: checkov
+        run: |
+          checkov -d . --output json > checkov_report.json
+        continue-on-error: true # Hataya rağmen devam etsin ki webhook'a yollayabilelim
+
+      - name: Send Report to Webhook (If Failed)
+        if: steps.checkov.outcome == 'failure'
+        run: |
+          # DİKKAT: Gerçek dünyada bu URL, ngrok gibi bir servisle dışarı açılmış yerel bilgisayarınızın
+          # adresi veya buluttaki bir sunucunun adresi olmalıdır.
+          # Örnek: curl -X POST -H "Content-Type: application/json" -d @checkov_report.json https://sizin-ngrok-adresiniz.ngrok-free.app/webhook
+          echo "Tarama başarısız oldu! Rapor webhook'a iletiliyor..."
+          
+      - name: Fail the Pipeline
+        if: steps.checkov.outcome == 'failure'
+        run: |
+          echo "Güvenlik zafiyetleri tespit edildiği için deployment durduruldu!"
+          exit 1

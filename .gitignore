@@ -1,0 +1,22 @@
+# Secrets
+.env
+AmazonWebSwervices.txt
+*.key
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Docker
+.docker/
+
+# Mock and Logs
+mock_payload.json
+checkov_report.json
+ai_cozumu.md

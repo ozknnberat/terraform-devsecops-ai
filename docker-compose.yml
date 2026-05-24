@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: tail -f /dev/null # Keep the container alive for us to run commands inside
+
+  webhook:
+    build:
+      context: ./webhook-service
+      dockerfile: Dockerfile
+    volumes:
+      - .:/project # Mount the project root to write ai_cozumu.md
+      - ./webhook-service:/app # Mount source for live reload
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+
