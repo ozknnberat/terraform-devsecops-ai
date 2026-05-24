@@ -1,42 +1,39 @@
 provider "aws" {
-  # Bölge .env dosyasındaki AWS_DEFAULT_REGION üzerinden veya varsayılan olarak us-east-1 ayarlanır
   region = "us-east-1"
 }
 
-# 1. Zafiyet: Herkese Açık (Public) S3 Bucket
+# 1. S3 BUCKET VE GÜVENLİK AYARLARI (GÜVENLİ)
 resource "aws_s3_bucket" "vulnerable_bucket" {
-  bucket = "my-devsecops-vulnerable-bucket-ai-demo" # Bucket isimleri AWS genelinde benzersiz olmalıdır
+  bucket = "my-secure-production-bucket-demo-xyz" 
 }
 
 resource "aws_s3_bucket_public_access_block" "vulnerable_bucket_access" {
   bucket = aws_s3_bucket.vulnerable_bucket.id
 
-  # DİKKAT: Gerçek dünyada bunların hepsi 'true' olmalıdır!
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  # Tüm public erişim engelleme kuralları 'true' yapılmıştır.
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
-# 2. Zafiyet: Dünyaya Açık (0.0.0.0/0) Security Group
+# 2. SECURITY GROUP VE SSH ERİŞİM AYARLARI (GÜVENLİ)
 resource "aws_security_group" "vulnerable_sg" {
-  name        = "vulnerable-sg-demo"
-  description = "Security group with completely open SSH and HTTP ports"
+  name        = "secure-ssh-sg-demo"
+  description = "SSH and HTTP access restricted to trusted networks only"
 
-  # SSH Portu (22) herkese açık
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] 
+    cidr_blocks = ["192.168.1.0/24"] # Sadece şirket içi IP'ye izin verildi
   }
 
-  # HTTP Portu (80) herkese açık
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["192.168.1.0/24"] # HTTP de sadece şirket içi IP'ye sınırlandırıldı
   }
 
   egress {
