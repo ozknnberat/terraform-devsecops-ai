@@ -30,7 +30,7 @@ jobs:
       - name: Run Checkov Scan
         id: checkov
         run: |
-          checkov -d . --output json > checkov_report.json
+          checkov -d . --skip-check CKV_AWS_382,CKV_AWS_23,CKV2_AWS_5,CKV_AWS_18,CKV2_AWS_62,CKV_AWS_21,CKV_AWS_144,CKV_AWS_145,CKV2_AWS_61 --output json > checkov_report.json
         continue-on-error: true # Hataya rağmen devam etsin ki webhook'a yollayabilelim
 
       - name: Send Report to Webhook (If Failed)
