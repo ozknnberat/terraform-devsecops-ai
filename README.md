@@ -44,7 +44,7 @@ cd terraform-devsecops-ai
 ### Adım 2: Çevre Değişkenlerini (API Key) Ayarlayın
 Proje ana dizininde bir `.env` dosyası oluşturun ve içine Gemini API anahtarınızı yapıştırın:
 ```text
-GEMINI_API_KEY=sizin_gemini_api_anahtariniz_buraya_gelecek
+GEMINI_API_KEY=API KEY'ınız
 ```
 
 ### Adım 3: AI Webhook Sunucusunu Docker ile Başlatın
